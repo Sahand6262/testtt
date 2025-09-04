@@ -10,15 +10,15 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         /* Kurdish-supporting font */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700&display=swap');
 
-/* Font Awesome icons */
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+        /* Font Awesome icons */
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
 
-/* Apply the font globally */
-body {
-    font-family: 'Noto Sans Arabic', sans-serif;
-}
+        /* Apply the font globally */
+        body {
+            font-family: 'Noto Sans Arabic', sans-serif;
+        }
 
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -191,6 +191,71 @@ body {
             direction: ltr;
             text-align: left;
         }
+        
+        /* Custom styles for validation */
+        .validation-error {
+            border-color: #f87171 !important;
+        }
+        
+        .file-input-hidden {
+            opacity: 0;
+            position: absolute;
+            z-index: -1;
+        }
+        
+        .file-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .file-preview {
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .file-preview-remove {
+            cursor: pointer;
+            color: #ef4444;
+        }
+        
+        /* Custom styles for request type selection */
+        .request-type-card {
+            transition: all 0.3s ease;
+        }
+        
+        .request-type-card.selected {
+            transform: scale(1.02);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Predefined color classes for request types */
+        .request-type-project {
+            background: linear-gradient(to bottom right, #60a5fa, #3b82f6, #2563eb);
+            color: white;
+        }
+        
+        .request-type-suggestion {
+            background: linear-gradient(to bottom right, #fbbf24, #f59e0b, #d97706);
+            color: white;
+        }
+        
+        .request-type-complaint {
+            background: linear-gradient(to bottom right, #f87171, #ef4444, #dc2626);
+            color: white;
+        }
+        
+        .request-type-general {
+            background: linear-gradient(to bottom right, #34d399, #10b981, #059669);
+            color: white;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col bg-gray-50" dir="rtl">
@@ -219,39 +284,43 @@ body {
     </div>
 
     <!-- Header -->
-    <header class="relative overflow-hidden border-b border-green-100" style="height: 130px; background: url('https://d2wqffb2bc8st5.cloudfront.net/resources/files/2017/10/MamJalal%20(2).jpg') center/100% 100% no-repeat;">
+    <header class="relative overflow-hidden border-b border-green-100" 
+            style="height: 130px; background: url('https://d2wqffb2bc8st5.cloudfront.net/resources/files/2017/10/MamJalal%20(2).jpg') center/100% 100% no-repeat;">
 
-    <!-- Green gradient overlay -->
-    <div class="absolute inset-0 bg-gradient-to-r from-green-400 via-green-500 to-green-600 opacity-50 z-0"></div>
+      <!-- Green gradient overlay -->
+      <div class="absolute inset-0 bg-gradient-to-r from-green-400 via-green-500 to-green-600 opacity-50 z-0"></div>
 
-    <!-- Header content -->
-    <div class="container mx-auto px-4 sm:px-6 py-4 sm:py-6 relative z-10">
-        <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3 sm:gap-6 animate-slideInLeft" style="animation-delay: 0.3s;">
-                <div class="space-y-0.5 sm:space-y-1">
-                    <h1 class="text-xl sm:text-3xl font-bold text-white">فۆرمی فیدباک</h1>
-                    <div class="flex items-center gap-2">
-                        <div class="h-0.5 w-4 sm:w-6 bg-white"></div>
-                        <p class="text-xs sm:text-sm text-white">یەکێتی نیشتیمانیی کوردستان</p>
-                    </div>
-                </div>
+      <!-- Header content -->
+      <div class="container mx-auto px-4 sm:px-6 h-full relative z-10">
+        <div class="flex items-center justify-between h-full">
+          
+          <!-- Left (Title + Subtitle) -->
+          <div class="flex items-center gap-3 sm:gap-6 animate-slideInLeft" style="animation-delay: 0.3s;">
+            <div class="space-y-0.5 sm:space-y-1">
+              <h1 id="headerTitle" class="text-xl sm:text-3xl font-bold text-white">فۆرمی فیدباک</h1>
+              <div class="flex items-center gap-2">
+                <div class="h-0.5 w-4 sm:w-6 bg-white"></div>
+                <p id="headerSubtitle" class="text-xs sm:text-sm text-white">یەکێتی نیشتیمانیی کوردستان</p>
+              </div>
             </div>
+          </div>
 
-            <div class="animate-slideInRight" style="animation-delay: 0.3s;">
-                <button id="languageButton" class="relative flex items-center gap-1 sm:gap-2 py-1.5 sm:py-2 px-3 sm:px-4 rounded-full bg-gradient-to-r from-green-50 to-white border border-green-100 text-green-700 hover:shadow-md hover:border-green-200 transition-all group animate-float">
-                    <i data-lucide="globe" class="w-4 h-4 sm:w-5 sm:h-5 text-green-500 animate-pulse-slow"></i>
-                    <span class="font-medium text-xs sm:text-sm">کوردی</span>
-                    <i data-lucide="chevron-down" class="w-3 h-3 sm:w-4 sm:h-4 text-green-500 group-hover:rotate-180 transition-transform duration-300"></i>
-                    <div class="absolute inset-0 rounded-full border border-green-300/50 animate-ping opacity-30"></div>
-                </button>
-            </div>
+          <!-- Right (Language Button) -->
+          <div class="animate-slideInRight" style="animation-delay: 0.3s;">
+            <button id="languageButton" 
+                    class="relative flex items-center gap-1 sm:gap-2 py-1.5 sm:py-2 px-1 sm:px-4 rounded-full 
+                           bg-gradient-to-r from-green-50 to-white border border-green-100 text-green-700 
+                           hover:shadow-md hover:border-green-200 transition-all group animate-float">
+              <i data-lucide="globe" class="w-4 h-4 sm:w-5 sm:h-5 text-green-500 animate-pulse-slow"></i>
+              <span id="languageButtonText" class="font-medium text-xs sm:text-sm">کوردی</span>
+              <i data-lucide="chevron-down" class="w-3 h-3 sm:w-4 sm:h-4 text-green-500 group-hover:rotate-180 transition-transform duration-300"></i>
+              <div class="absolute inset-0 rounded-full border border-green-300/50 animate-ping opacity-30"></div>
+            </button>
+          </div>
+
         </div>
-    </div>
-
-</header>
-
-
-
+      </div>
+    </header>
 
     <!-- Main Content -->
     <main class="container mx-auto px-4 sm:px-6 py-8 sm:py-12 flex-grow relative">
@@ -279,7 +348,7 @@ body {
                         <!-- Steps will be populated by JavaScript -->
                     </div>
                 </div>
-            </div>
+    </div>
             
             <!-- Form Container -->
             <div class="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-4 sm:p-8 mb-6 sm:mb-10 relative overflow-hidden border border-green-50 animate-slideInUp" style="animation-delay: 0.5s;">
@@ -294,40 +363,44 @@ body {
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-white relative overflow-hidden border-t border-green-100">
-        
-           
-        <div class="container mx-auto px-4 sm:px-6 py-6 sm:py-8 relative z-10">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6">
-                <div class="flex items-center gap-3 animate-slideInLeft" style="animation-delay: 0.3s;">
-                    <div class="relative group">
-                        <div class="absolute -inset-1 bg-gradient-to-r from-green-400 to-green-600 rounded-full blur opacity-30 group-hover:opacity-100 transition duration-1000"></div>
-                        
-                    </div>
-                    <span class="text-sm text-gray-600">© 2023 یەکێتی نیشتیمانیی کوردستان</span>
-                </div>
-                
-                <div class="flex items-center gap-3 sm:gap-6 flex-wrap justify-center animate-slideInRight" style="animation-delay: 0.3s;">
-                    <a href="#" class="text-xs sm:text-sm text-gray-500 hover:text-green-600 transition-colors relative group flex items-center gap-1">
-                        <i data-lucide="shield" class="w-3 h-3 opacity-70"></i>
-                        <span>سیاسەتی تایبەتمەندی</span>
-                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-green-400 to-green-600 group-hover:w-full transition-all duration-300"></span>
-                    </a>
-                    <a href="#" class="text-xs sm:text-sm text-gray-500 hover:text-green-600 transition-colors relative group">
-                        <span>مەرجەکانی خزمەتگوزاری</span>
-                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-green-400 to-green-600 group-hover:w-full transition-all duration-300"></span>
-                    </a>
-                    <a href="#" class="text-xs sm:text-sm text-gray-500 hover:text-green-600 transition-colors relative group flex items-center gap-1">
-                        <span>پەیوەندی</span>
-                        <i data-lucide="external-link" class="w-3 h-3 opacity-70"></i>
-                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-green-400 to-green-600 group-hover:w-full transition-all duration-300"></span>
-                    </a>
-                   
-                </div>
+   <!-- Footer -->
+<footer class="bg-white relative overflow-hidden border-t border-green-100">
+    <div class="container mx-auto px-4 sm:px-6 py-6 sm:py-8 relative z-10">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6">
+            
+            <!-- Left side: Logo + Copyright -->
+            <div class="flex items-center gap-3 animate-slideInLeft" style="animation-delay: 0.3s;">
+                <img
+                    src="https://thekurdishproject.org/wp-content/uploads/2015/02/5920151422013_puk.png"
+                    alt="avatar"
+                    class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover object-center"
+                />
+                <span id="footerCopyright" class="text-sm text-gray-600">
+                    © 2025 یەکێتی نیشتیمانیی کوردستان
+                </span>
+            </div>
+            
+            <!-- Right side: Links -->
+            <div class="flex items-center gap-3 sm:gap-6 flex-wrap justify-center animate-slideInRight" style="animation-delay: 0.3s;">
+                <a href="#" class="text-xs sm:text-sm text-gray-500 hover:text-green-600 transition-colors relative group flex items-center gap-1">
+                    <i data-lucide="shield" class="w-3 h-3 opacity-70"></i>
+                    <span id="footerPrivacy">سیاسەتی تایبەتمەندی</span>
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-green-400 to-green-600 group-hover:w-full transition-all duration-300"></span>
+                </a>
+                <a href="#" class="text-xs sm:text-sm text-gray-500 hover:text-green-600 transition-colors relative group">
+                    <span id="footerTerms">مەرجەکانی خزمەتگوزاری</span>
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-green-400 to-green-600 group-hover:w-full transition-all duration-300"></span>
+                </a>
+                <a href="#" class="text-xs sm:text-sm text-gray-500 hover:text-green-600 transition-colors relative group flex items-center gap-1">
+                    <span id="footerContact">پەیوەندی</span>
+                    <i data-lucide="external-link" class="w-3 h-3 opacity-70"></i>
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-green-400 to-green-600 group-hover:w-full transition-all duration-300"></span>
+                </a>
             </div>
         </div>
-    </footer>
+    </div>
+</footer>
+
 
     <!-- Location Modal -->
     <div id="locationModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black/50 backdrop-blur-sm hidden">
@@ -335,39 +408,42 @@ body {
             <div class="absolute inset-0 pattern-dots opacity-5"></div>
             <div class="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-green-400 via-green-500 to-green-400"></div>
             
+            <!-- HEADER -->
             <div class="relative p-6 sm:p-8 bg-gradient-to-br from-green-400 via-green-500 to-green-600">
-                <div class="absolute inset-0 bg-green-500 pattern-wave opacity-20"></div>
-                <div class="flex items-center gap-4 sm:gap-5">
+                <div class="absolute inset-0 bg-green-500 pattern-wave opacity-10"></div> 
+                
+                <div class="flex items-center gap-4 sm:gap-5 relative z-10">
                     <div class="relative bg-white shadow-lg w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center rounded-full animate-float" style="animation-delay: 0s;">
                         <div class="absolute inset-0 rounded-full border-4 border-white/30 animate-ping opacity-30"></div>
                         <i data-lucide="map-pin" class="w-6 h-6 sm:w-7 sm:h-7 text-green-500"></i>
                     </div>
                     <div>
-                        <h2 class="text-xl sm:text-2xl font-bold text-white">دەستگەیشتن بە شوێن</h2>
-                        <p class="text-white/80 text-xs sm:text-sm mt-1">چالاککردنی خزمەتگوزاریەکانی شوێنی ورد</p>
+                        <h2 id="locationModalTitle" class="text-xl sm:text-2xl font-bold text-white">دەستگەیشتن بە شوێن</h2>
+                        <p id="locationModalSubtitle" class="text-white text-xs sm:text-sm mt-1">چالاککردنی خزمەتگوزاریەکانی شوێنی ورد</p>
                     </div>
                 </div>
             </div>
             
+            <!-- BODY -->
             <div class="p-6 sm:p-8 relative">
-                <p class="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8 leading-relaxed text-right">
+                <p id="locationModalDescription" class="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8 leading-relaxed text-right">
                     ئێمە پێویستمان بە شوێنی ئێوەیە بۆ پێشکەشکردنی خزمەتگوزاری باشتر. ئەمە یارمەتیمان دەدات بۆ پەیوەندی کردن لەگەڵ خزمەتگوزاریەکان و زانیاریەکانی پەیوەندیدار بە ناوچەکەت.
                 </p>
                 
                 <div class="flex gap-3 sm:gap-4">
-                    <button class="flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg sm:rounded-xl bg-gradient-to-r from-green-500 to-green-600 text-white font-medium text-sm sm:text-base hover:from-green-600 hover:to-green-700 transition-all shadow-lg shadow-green-500/20 flex items-center justify-center gap-2 relative overflow-hidden group">
+                    <button id="locationAllowButton" class="flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg sm:rounded-xl bg-gradient-to-r from-green-500 to-green-600 text-white font-medium text-sm sm:text-base hover:from-green-600 hover:to-green-700 transition-all shadow-lg shadow-green-500/20 flex items-center justify-center gap-2 relative overflow-hidden group">
                         <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                         <i data-lucide="shield-check" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                         <span>ڕێگەدان</span>
                     </button>
-                    <button class="flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg sm:rounded-xl bg-gray-100 text-gray-700 font-medium text-sm sm:text-base hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 border border-gray-200 relative overflow-hidden group">
+                    <button id="locationDenyButton" class="flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg sm:rounded-xl bg-gray-100 text-gray-700 font-medium text-sm sm:text-base hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 border border-gray-200 relative overflow-hidden group">
                         <div class="absolute inset-0 bg-gradient-to-r from-transparent via-gray-200/50 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                         <i data-lucide="x" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                         <span>ڕەتکردنەوە</span>
                     </button>
                 </div>
                 
-                <p class="text-xs text-gray-400 mt-5 sm:mt-6 text-center">
+                <p id="locationModalFooter" class="text-xs text-gray-400 mt-5 sm:mt-6 text-center">
                     تایبەتمەندی ئێوە گرنگە بۆ ئێمە. داتای شوێنی ئێوە تەنها بەکاردێت بۆ باشترکردنی ئەزموونەکەت.
                 </p>
             </div>
@@ -376,27 +452,45 @@ body {
 
     <!-- Language Modal -->
     <div id="languageModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black/50 backdrop-blur-sm hidden">
-        <div class="relative bg-white w-11/12 max-w-md rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden animate-fadeIn" style="animation-delay: 0.2s;">
-            <div class="absolute inset-0 pattern-dots opacity-5"></div>
-            <div class="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-green-400 via-green-500 to-green-400"></div>
+      <div class="relative bg-white w-11/12 max-w-md rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden animate-fadeIn" style="animation-delay: 0.2s;">
+        <div class="absolute inset-0 pattern-dots opacity-5"></div>
+        <div class="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-green-400 via-green-500 to-green-400"></div>
+        
+        <!-- Modal header with gradient -->
+        <div class="relative p-6 sm:p-8 bg-gradient-to-br from-green-400 via-green-500 to-green-600">
+          <div class="absolute inset-0 bg-green-500 pattern-wave opacity-20"></div>
+          
+          <div class="flex items-center gap-4 sm:gap-5 relative z-10">
             
-            <div class="relative p-6 sm:p-8 bg-gradient-to-br from-green-400 via-green-500 to-green-600">
-                <div class="absolute inset-0 bg-green-500 pattern-wave opacity-20"></div>
-                <div class="flex items-center gap-4 sm:gap-5">
-                    <div class="relative bg-white shadow-lg w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center rounded-full animate-spin-slow">
-                        <i data-lucide="globe" class="w-6 h-6 sm:w-7 sm:h-7 text-green-500"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-xl sm:text-2xl font-bold text-white">زمان هەڵبژێرە</h2>
-                        <p class="text-white/80 text-xs sm:text-sm mt-1">زمانی دڵخوازی خۆت هەڵبژێرە</p>
-                    </div>
-                </div>
+            <!-- Updated globe icon with float + ping -->
+            <div class="relative bg-white shadow-lg w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center rounded-full animate-float">
+              <div class="absolute inset-0 rounded-full border-4 border-white/30 animate-ping opacity-30"></div>
+              <i data-lucide="globe" class="w-6 h-6 sm:w-7 sm:h-7 text-green-500"></i>
             </div>
             
-            <div class="p-6 sm:p-8 grid grid-cols-1 gap-3 sm:gap-4" id="languageOptions">
-                <!-- Language options will be populated by JavaScript -->
+            <!-- Title + Subtitle -->
+            <div>
+              <h2 id="languageModalTitle" class="text-xl sm:text-2xl font-bold text-white drop-shadow-md">
+                زمان هەڵبژێرە
+              </h2>
+              <p id="languageModalSubtitle" class="text-white text-xs sm:text-sm mt-1 drop-shadow-md">
+                زمانی دڵخوازی خۆت هەڵبژێرە
+              </p>
             </div>
+          </div>
         </div>
+        
+        <!-- Options -->
+        <div class="p-6 sm:p-8 grid grid-cols-1 gap-3 sm:gap-4" id="languageOptions">
+          <!-- Language options will be populated by JavaScript -->
+        </div>
+        
+        <div class="px-6 sm:px-8 pb-6 sm:pb-8">
+          <p id="languageModalFooter" class="text-xs text-gray-400 text-center">
+            هەڵبژاردنی زمانەکەت بۆ سەردانەکانی داهاتوو پاشەکەوت دەکرێت
+          </p>
+        </div>
+      </div>
     </div>
 
     <script>
@@ -428,11 +522,10 @@ body {
                     subtitle: 'Patriotic Union of Kurdistan'
                 },
                 footer: {
-                    copyright: '© 2023 Patriotic Union of Kurdistan',
+                    copyright: '© 2025 Patriotic Union of Kurdistan',
                     privacy: 'Privacy Policy',
                     terms: 'Terms of Service',
-                    contact: 'Contact',
-                    madeWith: 'Made with care'
+                    contact: 'Contact'
                 },
                 progressSteps: [
                     'Request Type',
@@ -494,7 +587,7 @@ body {
                 },
                 locationModal: {
                     title: 'Location Access',
-                    content: 'Enable precise location services',
+                    subtitle: 'Enable precise location services',
                     description: 'We need your location to provide better service. This helps us connect you with services and information relevant to your area.',
                     allow: 'Allow',
                     deny: 'Deny',
@@ -512,11 +605,10 @@ body {
                     subtitle: 'یەکێتی نیشتیمانیی کوردستان'
                 },
                 footer: {
-                    copyright: '© 2023 یەکێتی نیشتیمانیی کوردستان',
+                    copyright: '© 2025 یەکێتی نیشتیمانیی کوردستان',
                     privacy: 'سیاسەتی تایبەتمەندی',
                     terms: 'مەرجەکانی خزمەتگوزاری',
-                    contact: 'پەیوەندی',
-                    madeWith: 'دروستکراوە بە خۆشەویستیەوە'
+                    contact: 'پەیوەندی'
                 },
                 progressSteps: [
                     'جۆری داواکاری',
@@ -578,7 +670,7 @@ body {
                 },
                 locationModal: {
                     title: 'دەستگەیشتن بە شوێن',
-                    content: 'چالاککردنی خزمەتگوزاریەکانی شوێنی ورد',
+                    subtitle: 'چالاککردنی خزمەتگوزاریەکانی شوێنی ورد',
                     description: 'ئێمە پێویستمان بە شوێنی ئێوەیە بۆ پێشکەشکردنی خزمەتگوزاری باشتر. ئەمە یارمەتیمان دەدات بۆ پەیوەندی کردن لەگەڵ خزمەتگوزاریەکان و زانیاریەکانی پەیوەندیدار بە ناوچەکەت.',
                     allow: 'ڕێگەدان',
                     deny: 'ڕەتکردنەوە',
@@ -596,11 +688,10 @@ body {
                     subtitle: 'الاتحاد الوطني الكردستاني'
                 },
                 footer: {
-                    copyright: '© 2023 الاتحاد الوطني الكردستاني',
+                    copyright: '© 2025 الاتحاد الوطني الكردستاني',
                     privacy: 'سياسة الخصوصية',
                     terms: 'شروط الخدمة',
-                    contact: 'اتصل بنا',
-                    madeWith: 'صنع بعناية'
+                    contact: 'اتصل بنا'
                 },
                 progressSteps: [
                     'نوع الطلب',
@@ -662,8 +753,8 @@ body {
                 },
                 locationModal: {
                     title: 'الوصول إلى الموقع',
-                    content: 'تمكين خدمات الموقع الدقيقة',
-                    description: 'نحتاج إلى موقعك لتقديم خدمة أفضل. هذا يساعدنا على توصيلك بالخدمات والمعلومات ذات الصلة بمنطقتك.',
+                    subtitle: 'تمكين خدمات الموقع الدقيقة',
+                    description: 'نحتاج إلى موقعك لتقديم خدمة лучше. هذا يساعدنا на توصيلك بالخدمات والمعلومات ذات الصلة بمنطقتك.',
                     allow: 'السماح',
                     deny: 'رفض',
                     footer: 'خصوصيتك مهمة بالنسبة لنا. يتم استخدام بيانات موقعك فقط لتحسين تجربتك.'
@@ -706,7 +797,7 @@ body {
             {
                 id: 'project',
                 icon: '<i data-lucide="file-text" class="w-5 h-5 sm:w-6 sm:h-6"></i>',
-                color: 'from-blue-400 via-blue-500 to-blue-600',
+                color: 'request-type-project',
                 lightColor: 'bg-blue-50',
                 borderColor: 'border-blue-100',
                 iconColor: 'text-blue-500',
@@ -715,7 +806,7 @@ body {
             {
                 id: 'suggestion',
                 icon: '<i data-lucide="lightbulb" class="w-5 h-5 sm:w-6 sm:h-6"></i>',
-                color: 'from-yellow-400 via-yellow-500 to-yellow-600',
+                color: 'request-type-suggestion',
                 lightColor: 'bg-yellow-50',
                 borderColor: 'border-yellow-100',
                 iconColor: 'text-yellow-500',
@@ -724,7 +815,7 @@ body {
             {
                 id: 'complaint',
                 icon: '<i data-lucide="alert-triangle" class="w-5 h-5 sm:w-6 sm:h-6"></i>',
-                color: 'from-red-400 via-red-500 to-red-600',
+                color: 'request-type-complaint',
                 lightColor: 'bg-red-50',
                 borderColor: 'border-red-100',
                 iconColor: 'text-red-500',
@@ -733,7 +824,7 @@ body {
             {
                 id: 'general',
                 icon: '<i data-lucide="message-square" class="w-5 h-5 sm:w-6 sm:h-6"></i>',
-                color: 'from-green-400 via-green-500 to-green-600',
+                color: 'request-type-general',
                 lightColor: 'bg-green-50',
                 borderColor: 'border-green-100',
                 iconColor: 'text-green-500',
@@ -746,11 +837,49 @@ body {
             renderProgressBar();
             renderFormContent();
             setupEventListeners();
+            updateAllTexts();
             
             // Show location modal after a delay
             setTimeout(() => {
                 document.getElementById('locationModal').classList.remove('hidden');
             }, 500);
+        }
+        
+        // Update all texts based on current language
+        function updateAllTexts() {
+            const text = texts[state.currentLanguage];
+            
+            // Update header
+            document.getElementById('headerTitle').textContent = text.header.title;
+            document.getElementById('headerSubtitle').textContent = text.header.subtitle;
+            
+            // Update footer
+            document.getElementById('footerCopyright').textContent = text.footer.copyright;
+            document.getElementById('footerPrivacy').textContent = text.footer.privacy;
+            document.getElementById('footerTerms').textContent = text.footer.terms;
+            document.getElementById('footerContact').textContent = text.footer.contact;
+            
+            // Update language button
+            document.getElementById('languageButtonText').textContent = 
+                state.currentLanguage === 'en' ? 'English' : 
+                state.currentLanguage === 'ku' ? 'کوردی' : 'العربية';
+            
+            // Update location modal
+            document.getElementById('locationModalTitle').textContent = text.locationModal.title;
+            document.getElementById('locationModalSubtitle').textContent = text.locationModal.subtitle;
+            document.getElementById('locationModalDescription').textContent = text.locationModal.description;
+            document.getElementById('locationAllowButton').querySelector('span').textContent = text.locationModal.allow;
+            document.getElementById('locationDenyButton').querySelector('span').textContent = text.locationModal.deny;
+            document.getElementById('locationModalFooter').textContent = text.locationModal.footer;
+            
+            // Update language modal
+            document.getElementById('languageModalTitle').textContent = text.languageModal.title;
+            document.getElementById('languageModalSubtitle').textContent = text.languageModal.subtitle;
+            document.getElementById('languageModalFooter').textContent = text.languageModal.footer;
+            
+            // Re-render progress and form
+            renderProgressBar();
+            renderFormContent();
         }
         
         // Render progress bar
@@ -834,7 +963,7 @@ body {
                 
                 optionsHTML += `
                     <div class="animate-slideIn${animationDirection}" style="animation-delay: ${animationDelay}s;">
-                        <button onclick="selectRequestType('${type.id}')" class="w-full p-4 sm:p-6 rounded-xl sm:rounded-2xl transition-all duration-300 flex items-center gap-3 sm:gap-5 ${directionClass} ${isSelected ? `bg-gradient-to-br ${type.color} text-white shadow-lg` : `bg-white border ${type.borderColor} hover:shadow-md`} group relative overflow-hidden">
+                        <button onclick="selectRequestType('${type.id}')" data-type="${type.id}" class="w-full p-4 sm:p-6 rounded-xl sm:rounded-2xl transition-all duration-300 flex items-center gap-3 sm:gap-5 ${directionClass} request-type-card ${isSelected ? 'selected ' + type.color + ' text-white shadow-lg' : 'bg-white border ' + type.borderColor + ' hover:shadow-md'} group relative overflow-hidden">
                             <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                             <div class="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center rounded-lg sm:rounded-xl transition-all duration-500 ${isSelected ? 'bg-white/20' : type.lightColor} group-hover:scale-110">
                                 <div class="${isSelected ? 'text-white' : type.iconColor}">${type.icon}</div>
@@ -859,7 +988,7 @@ body {
                         <p class="text-sm sm:text-base text-gray-500">${text.subtitle}</p>
                         <div class="h-1 w-16 sm:w-20 bg-gradient-to-r from-green-400 to-green-600 rounded-full mt-2 sm:mt-3"></div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-5" id="requestTypeOptions">
                         ${optionsHTML}
                     </div>
                     <div class="mt-6 sm:mt-10 flex justify-end animate-slideInUp" style="animation-delay: 0.5s;">
@@ -987,7 +1116,8 @@ body {
                                 <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-green-400 to-green-600"></div>
                                 <div>
                                     <label class="block mb-1.5 sm:mb-2 font-medium text-sm sm:text-base text-gray-700 ${directionClass}">${text.fileUpload}</label>
-                                    <div class="dropzone border-2 border-dashed border-gray-300 rounded-lg sm:rounded-xl p-6 sm:p-8 transition-all duration-200 cursor-pointer hover:border-green-500 hover:bg-green-50 relative overflow-hidden group">
+                                    <div class="dropzone border-2 border-dashed border-gray-300 rounded-lg sm:rounded-xl p-6 sm:p-8 transition-all duration-200 cursor-pointer hover:border-green-500 hover:bg-green-50 relative overflow-hidden group" onclick="document.getElementById('fileInput').click()">
+                                        <input type="file" id="fileInput" class="file-input-hidden" multiple onchange="handleFileSelect(this.files)">
                                         <div class="absolute inset-0 bg-gradient-to-r from-green-100/0 via-green-100/30 to-green-100/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
                                         <div class="flex flex-col items-center justify-center gap-3 sm:gap-4 text-gray-500 relative">
                                             <div class="bg-green-100 p-3 sm:p-4 rounded-full animate-float">
@@ -996,6 +1126,9 @@ body {
                                             <p class="text-center text-xs sm:text-sm">${text.dragDrop}</p>
                                             <p class="text-xs text-gray-400">${text.fileSize}</p>
                                         </div>
+                                    </div>
+                                    <div id="filePreviewContainer" class="file-preview-container mt-4">
+                                        ${renderFilePreviews()}
                                     </div>
                                 </div>
                             </div>
@@ -1013,6 +1146,43 @@ body {
                     </div>
                 </div>
             `;
+        }
+        
+        // Render file previews
+        function renderFilePreviews() {
+            if (!state.formData.files || state.formData.files.length === 0) {
+                return '';
+            }
+            
+            return state.formData.files.map((file, index) => `
+                <div class="file-preview">
+                    <i data-lucide="file-text" class="w-4 h-4 text-green-500"></i>
+                    <span class="truncate max-w-xs">${file.name}</span>
+                    <button onclick="removeFile(${index})" class="file-preview-remove">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+        
+        // Handle file selection
+        function handleFileSelect(files) {
+            if (!files || files.length === 0) return;
+            
+            // Convert FileList to Array and add to state
+            const newFiles = Array.from(files);
+            state.formData.files = [...state.formData.files, ...newFiles];
+            
+            // Update preview
+            document.getElementById('filePreviewContainer').innerHTML = renderFilePreviews();
+            lucide.createIcons();
+        }
+        
+        // Remove file
+        function removeFile(index) {
+            state.formData.files.splice(index, 1);
+            document.getElementById('filePreviewContainer').innerHTML = renderFilePreviews();
+            lucide.createIcons();
         }
         
         // Render confirmation step
@@ -1033,11 +1203,11 @@ body {
             
             const getRequestColor = () => {
                 switch (state.formData.requestType) {
-                    case 'project': return 'from-blue-400 via-blue-500 to-blue-600';
-                    case 'suggestion': return 'from-yellow-400 via-yellow-500 to-yellow-600';
-                    case 'complaint': return 'from-red-400 via-red-500 to-red-600';
-                    case 'general': return 'from-green-400 via-green-500 to-green-600';
-                    default: return 'from-green-400 via-green-500 to-green-600';
+                    case 'project': return 'request-type-project';
+                    case 'suggestion': return 'request-type-suggestion';
+                    case 'complaint': return 'request-type-complaint';
+                    case 'general': return 'request-type-general';
+                    default: return 'request-type-general';
                 }
             };
             
@@ -1052,7 +1222,7 @@ body {
                         <div class="absolute ${state.direction === 'rtl' ? 'right-0' : 'left-0'} -top-2 w-full h-full bg-green-50/50 rounded-xl sm:rounded-2xl -z-10 transform rotate-1"></div>
                         <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200 overflow-hidden shadow-lg relative">
                             <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-green-400 to-green-600"></div>
-                            <div class="p-4 sm:p-6 bg-gradient-to-br ${getRequestColor()}">
+                            <div class="p-4 sm:p-6 ${getRequestColor()}">
                                 <div class="flex items-center gap-3 sm:gap-4 ${directionClass}">
                                     <div class="bg-white/20 p-2 sm:p-3 rounded-lg backdrop-blur-sm">
                                         ${getRequestIcon()}
@@ -1087,6 +1257,17 @@ body {
                                     </h4>
                                     <p class="text-gray-800 whitespace-pre-wrap bg-white p-3 sm:p-4 rounded-md sm:rounded-lg border border-gray-100 text-sm sm:text-base">${state.formData.description}</p>
                                 </div>
+                                ${state.formData.files.length > 0 ? `
+                                    <div class="bg-gray-50 p-3 sm:p-5 rounded-lg sm:rounded-xl">
+                                        <h4 class="text-xs sm:text-sm font-medium text-gray-500 mb-1 sm:mb-2 flex items-center gap-2 ${directionClass}">
+                                            <i data-lucide="paperclip" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-40"></i>
+                                            فایلەکان
+                                        </h4>
+                                        <div class="file-preview-container">
+                                            ${renderFilePreviews()}
+                                        </div>
+                                    </div>
+                                ` : ''}
                             </div>
                         </div>
                     </div>
@@ -1159,7 +1340,6 @@ body {
                 `;
             });
             
-            optionsHTML += `<p class="text-xs text-gray-400 mt-2 text-center">${texts[state.currentLanguage].languageModal.footer}</p>`;
             languageOptions.innerHTML = optionsHTML;
             lucide.createIcons();
         }
@@ -1171,12 +1351,22 @@ body {
                 renderLanguageOptions();
             });
             
-            document.querySelectorAll('#locationModal button, #languageModal button').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    if (e.target.closest('#locationModal')) {
-                        document.getElementById('locationModal').classList.add('hidden');
-                    }
-                });
+            document.getElementById('locationAllowButton').addEventListener('click', () => {
+                document.getElementById('locationModal').classList.add('hidden');
+            });
+            
+            document.getElementById('locationDenyButton').addEventListener('click', () => {
+                document.getElementById('locationModal').classList.add('hidden');
+            });
+            
+            // Close modals when clicking outside
+            document.addEventListener('click', (e) => {
+                if (e.target.id === 'locationModal') {
+                    document.getElementById('locationModal').classList.add('hidden');
+                }
+                if (e.target.id === 'languageModal') {
+                    document.getElementById('languageModal').classList.add('hidden');
+                }
             });
         }
         
@@ -1189,6 +1379,7 @@ body {
                 const errorElement = document.getElementById(`${field}Error`);
                 if (errorElement) {
                     errorElement.classList.add('hidden');
+                    document.getElementById(field).classList.remove('validation-error');
                 }
             }
         }
@@ -1196,7 +1387,74 @@ body {
         // Select request type
         function selectRequestType(type) {
             state.formData.requestType = type;
-            renderFormContent();
+            
+            // Update UI without reloading - use data attributes to identify cards
+            const cards = document.querySelectorAll('.request-type-card');
+            cards.forEach(card => {
+                const cardType = card.getAttribute('data-type');
+                const typeConfig = requestTypeOptions.find(t => t.id === cardType);
+                
+                if (cardType === type) {
+                    // Add selected class and color class
+                    card.classList.add('selected');
+                    card.classList.add(typeConfig.color);
+                    card.classList.remove('bg-white', typeConfig.borderColor);
+                    
+                    // Update text colors
+                    const textElements = card.querySelectorAll('span');
+                    textElements.forEach(el => {
+                        if (el.classList.contains('text-gray-500')) {
+                            el.classList.remove('text-gray-500');
+                            el.classList.add('text-white/80');
+                        }
+                    });
+                    
+                    // Update icon container
+                    const iconContainer = card.querySelector('div > div:first-child');
+                    if (iconContainer) {
+                        iconContainer.classList.remove(typeConfig.lightColor);
+                        iconContainer.classList.add('bg-white/20');
+                    }
+                    
+                    // Update icon
+                    const icon = card.querySelector('div > div:first-child > div');
+                    if (icon) {
+                        icon.classList.remove(typeConfig.iconColor);
+                        icon.classList.add('text-white');
+                    }
+                } else {
+                    // Remove selected class and color class
+                    card.classList.remove('selected');
+                    card.classList.remove(typeConfig.color);
+                    card.classList.add('bg-white', typeConfig.borderColor);
+                    
+                    // Update text colors
+                    const textElements = card.querySelectorAll('span');
+                    textElements.forEach(el => {
+                        if (el.classList.contains('text-white/80')) {
+                            el.classList.remove('text-white/80');
+                            el.classList.add('text-gray-500');
+                        }
+                    });
+                    
+                    // Update icon container
+                    const iconContainer = card.querySelector('div > div:first-child');
+                    if (iconContainer) {
+                        iconContainer.classList.remove('bg-white/20');
+                        iconContainer.classList.add(typeConfig.lightColor);
+                    }
+                    
+                    // Update icon
+                    const icon = card.querySelector('div > div:first-child > div');
+                    if (icon) {
+                        icon.classList.remove('text-white');
+                        icon.classList.add(typeConfig.iconColor);
+                    }
+                }
+            });
+            
+            // Enable next button
+            document.querySelector('button[onclick="nextStep()"]').disabled = false;
         }
         
         // Navigate to next step
@@ -1223,12 +1481,20 @@ body {
             
             if (!state.formData.name.trim()) {
                 document.getElementById('nameError').classList.remove('hidden');
+                document.getElementById('name').classList.add('validation-error');
                 isValid = false;
+            } else {
+                document.getElementById('nameError').classList.add('hidden');
+                document.getElementById('name').classList.remove('validation-error');
             }
             
             if (!state.formData.phone.trim()) {
                 document.getElementById('phoneError').classList.remove('hidden');
+                document.getElementById('phone').classList.add('validation-error');
                 isValid = false;
+            } else {
+                document.getElementById('phoneError').classList.add('hidden');
+                document.getElementById('phone').classList.remove('validation-error');
             }
             
             if (isValid) {
@@ -1240,7 +1506,11 @@ body {
         function validateDetails() {
             if (!state.formData.description.trim()) {
                 document.getElementById('descriptionError').classList.remove('hidden');
+                document.getElementById('description').classList.add('validation-error');
                 return;
+            } else {
+                document.getElementById('descriptionError').classList.add('hidden');
+                document.getElementById('description').classList.remove('validation-error');
             }
             
             nextStep();
@@ -1261,18 +1531,9 @@ body {
             
             // Update UI
             document.body.dir = state.direction;
-            document.querySelector('header h1').textContent = texts[lang].header.title;
-            document.querySelector('header p').textContent = texts[lang].header.subtitle;
-            document.querySelector('footer span').textContent = texts[lang].footer.copyright;
             
-            // Update language button text
-            const languageButton = document.getElementById('languageButton');
-            languageButton.querySelector('span').textContent = 
-                lang === 'en' ? 'English' : lang === 'ku' ? 'کوردی' : 'العربية';
-            
-            // Re-render form
-            renderProgressBar();
-            renderFormContent();
+            // Update all texts
+            updateAllTexts();
             
             // Close modal
             document.getElementById('languageModal').classList.add('hidden');
@@ -1290,8 +1551,8 @@ body {
         window.validateDetails = validateDetails;
         window.submitForm = submitForm;
         window.selectLanguage = selectLanguage;
+        window.handleFileSelect = handleFileSelect;
+        window.removeFile = removeFile;
     </script>
 </body>
-
 </html>
-
