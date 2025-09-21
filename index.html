@@ -197,6 +197,25 @@
             border-color: #f87171 !important;
         }
         
+        /* FIXED: Validation error icon positioning */
+        .validation-error-icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        /* FIXED: Ensure validation icons don't shift position */
+        .input-container {
+            position: relative;
+        }
+        
+        .input-icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: all 0.2s ease;
+        }
+        
         .file-input-hidden {
             opacity: 0;
             position: absolute;
@@ -333,7 +352,8 @@
         
         <div class="max-w-4xl mx-auto relative animate-fadeIn" style="animation-delay: 0.3s;">
             <!-- Progress Bar -->
-            <div class="mb-6 sm:mb-10 relative animate-slideInDown" style="animation-delay: 0.4s;">
+            <!-- FIXED: Added ID for progress container to hide it on success -->
+            <div id="progressContainer" class="mb-6 sm:mb-10 relative animate-slideInDown" style="animation-delay: 0.4s;">
                 <div class="p-4 sm:p-6 bg-white rounded-2xl shadow-sm border border-green-100">
                     <div class="overflow-hidden h-2 mb-4 sm:mb-6 rounded-full bg-gray-100 relative">
                         <div class="h-full bg-gradient-to-r from-green-400 via-green-500 to-green-600 transition-all duration-700 ease-out rounded-full relative overflow-hidden" style="width: 0%;" id="progressBar">
@@ -348,7 +368,7 @@
                         <!-- Steps will be populated by JavaScript -->
                     </div>
                 </div>
-    </div>
+            </div>
             
             <!-- Form Container -->
             <div class="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-4 sm:p-8 mb-6 sm:mb-10 relative overflow-hidden border border-green-50 animate-slideInUp" style="animation-delay: 0.5s;">
@@ -928,7 +948,12 @@
             
             if (state.submitted) {
                 formContent.innerHTML = renderSuccess();
+                // FIXED: Hide progress bar when form is submitted
+                document.getElementById('progressContainer').classList.add('hidden');
             } else {
+                // FIXED: Show progress bar when not submitted
+                document.getElementById('progressContainer').classList.remove('hidden');
+                
                 switch (state.currentStep) {
                     case 0:
                         formContent.innerHTML = renderRequestType();
@@ -1023,13 +1048,13 @@
                                 <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-green-400 to-green-600"></div>
                                 <div>
                                     <label class="block mb-1.5 sm:mb-2 font-medium text-sm sm:text-base text-gray-700 ${directionClass}" for="name">${text.name}</label>
-                                    <div class="relative">
-                                        <div class="absolute ${iconPosition} top-1/2 -translate-y-1/2 text-gray-500">
+                                    <div class="input-container">
+                                        <div class="input-icon ${iconPosition} text-gray-500">
                                             <i data-lucide="user" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                                         </div>
                                         <input type="text" id="name" value="${state.formData.name}" oninput="updateFormData('name', this.value)" class="w-full ${state.direction === 'rtl' ? 'pr-10 sm:pr-12 pl-10 sm:pl-12' : 'pl-10 sm:pl-12 pr-10 sm:pr-12'} py-3 sm:py-4 rounded-lg sm:rounded-xl border text-sm sm:text-base border-gray-300 focus:ring-green-500 focus:border-green-500 outline-none transition-all duration-200 ${directionClass}" placeholder="${text.name}..." dir="${state.direction}">
                                         ${state.formData.name ? `
-                                            <div class="absolute ${checkPosition} top-1/2 -translate-y-1/2 text-green-500">
+                                            <div class="input-icon ${checkPosition} text-green-500">
                                                 <i data-lucide="check" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                                             </div>
                                         ` : ''}
@@ -1044,13 +1069,13 @@
                                 <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-green-400 to-green-600"></div>
                                 <div>
                                     <label class="block mb-1.5 sm:mb-2 font-medium text-sm sm:text-base text-gray-700 ${directionClass}" for="phone">${text.phone}</label>
-                                    <div class="relative">
-                                        <div class="absolute ${iconPosition} top-1/2 -translate-y-1/2 text-gray-500">
+                                    <div class="input-container">
+                                        <div class="input-icon ${iconPosition} text-gray-500">
                                             <i data-lucide="phone" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                                         </div>
                                         <input type="tel" id="phone" value="${state.formData.phone}" oninput="updateFormData('phone', this.value)" class="w-full ${state.direction === 'rtl' ? 'pr-10 sm:pr-12 pl-10 sm:pl-12' : 'pl-10 sm:pl-12 pr-10 sm:pr-12'} py-3 sm:py-4 rounded-lg sm:rounded-xl border text-sm sm:text-base border-gray-300 focus:ring-green-500 focus:border-green-500 outline-none transition-all duration-200 ${directionClass}" placeholder="${text.phone}..." dir="${state.direction}">
                                         ${state.formData.phone ? `
-                                            <div class="absolute ${checkPosition} top-1/2 -translate-y-1/2 text-green-500">
+                                            <div class="input-icon ${checkPosition} text-green-500">
                                                 <i data-lucide="check" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                                             </div>
                                         ` : ''}
@@ -1095,13 +1120,13 @@
                                 <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-green-400 to-green-600"></div>
                                 <div>
                                     <label class="block mb-1.5 sm:mb-2 font-medium text-sm sm:text-base text-gray-700 ${directionClass}" for="description">${text.description}</label>
-                                    <div class="relative">
-                                        <div class="absolute ${iconPosition} top-4 sm:top-5 text-gray-500">
+                                    <div class="input-container">
+                                        <div class="input-icon ${iconPosition} top-4 sm:top-5 text-gray-500">
                                             <i data-lucide="message-square" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                                         </div>
                                         <textarea id="description" rows="4" oninput="updateFormData('description', this.value)" class="w-full ${state.direction === 'rtl' ? 'pr-10 sm:pr-12 pl-10 sm:pl-12' : 'pl-10 sm:pl-12 pr-10 sm:pr-12'} py-3 sm:py-4 rounded-lg sm:rounded-xl border text-sm sm:text-base border-gray-300 focus:ring-green-500 focus:border-green-500 outline-none transition-all duration-200 resize-none ${directionClass}" placeholder="${text.description}..." dir="${state.direction}">${state.formData.description}</textarea>
                                         ${state.formData.description ? `
-                                            <div class="absolute ${checkPosition} top-4 sm:top-5 text-green-500">
+                                            <div class="input-icon ${checkPosition} top-4 sm:top-5 text-green-500">
                                                 <i data-lucide="check" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                                             </div>
                                         ` : ''}
@@ -1265,20 +1290,22 @@
                                         </h4>
                                         <div class="file-preview-container">
                                             ${renderFilePreviews()}
-                                        </div>
                                     </div>
                                 ` : ''}
                             </div>
                         </div>
                     </div>
+                   
                     <div class="mt-6 sm:mt-10 flex justify-between">
                         <button onclick="prevStep()" class="px-4 sm:px-8 py-2.5 sm:py-4 rounded-lg sm:rounded-xl bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 transition-all flex items-center gap-2 sm:gap-3 text-sm sm:text-base">
-                            <i data-lucide="arrow-left" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                            ${state.direction === 'rtl' ? '<i data-lucide="arrow-right" class="w-4 h-4 sm:w-5 sm:h-5"></i>' : '<i data-lucide="arrow-left" class="w-4 h-4 sm:w-5 sm:h-5"></i>'}
+                    
                             <span>${text.prev}</span>
                         </button>
                         <button onclick="submitForm()" class="px-4 sm:px-8 py-2.5 sm:py-4 rounded-lg sm:rounded-xl bg-gradient-to-r from-green-500 to-green-600 text-white font-medium hover:from-green-600 hover:to-green-700 transition-all shadow-lg shadow-green-500/30 flex items-center gap-2 sm:gap-3 text-sm sm:text-base">
+                   
                             <span>${text.submit}</span>
-                            <div class="w-4 h-4 sm:w-5 sm:h-5"></div>
+                                    <i data-lucide="send" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                         </button>
                     </div>
                 </div>
@@ -1315,7 +1342,7 @@
             const languageOptions = document.getElementById('languageOptions');
             let optionsHTML = '';
             
-            languages.forEach((lang, index) => {
+            languages.forEach((lang, index) =>{
                 const isCurrent = lang.code === state.currentLanguage;
                 const animationDelay = 0.2 + index * 0.1;
                 
